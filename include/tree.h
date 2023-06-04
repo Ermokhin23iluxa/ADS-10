@@ -22,14 +22,14 @@ class Tree {
   Node* root;
   std::vector<std::vector<char>> permutations;
 
-  void addNode(Node* new_root, std::vector<char> row) {
+  void addNode(Node* new_root, std::vector<char> row_first) {
     if (!new_root) {
       root = new_root = new Node;
     }
-    for (char symbol : row) {
+    for (char symbol : row_first) {
       Node* temp = new Node(symbol);
       new_root->descen_p.push_back(temp);
-      std::vector<char> newRow(row);
+      std::vector<char> newRow(row_first);
        newRow.erase(std::find(newRow.begin(), \
                               newRow.end(), symbol));
       addNode(temp, newRow);
@@ -38,7 +38,7 @@ class Tree {
 
   void evadeTree(Node* new_root, std::vector<char> row_first) {
     if (new_root != nullptr && new_root->symbol != '\0')
-      row.push_back(new_root->symbol);
+      row_first.push_back(new_root->symbol);
     if (new_root->descen_p.empty())
       permutations.push_back(row_first);
     for (Node* descen_p : new_root->descen_p) {
