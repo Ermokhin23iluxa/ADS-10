@@ -37,7 +37,7 @@ class Tree {
       Perm(p);
     }
   }
-  
+
  public:
   std::vector<std::vector<char>> permutations;
   Tree(std::vector<char> elements) {
