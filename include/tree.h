@@ -1,58 +1,54 @@
 // Copyright 2022 NNTU-CS
 #ifndef INCLUDE_TREE_H_
 #define INCLUDE_TREE_H_
-
 #include <vector>
 #include <algorithm>
+
 class Tree {
-  struct Node {
-    char c;
-    std::vector<Node*> tree_childs;
-  };
-  std::vector<char> perm;
-  Node* root = nullptr;
-  void create(std::vector<char> elements, Node* root) {
-    for (auto i : elements) {
-      if (i == root->c) {
-        elements.erase(std::remove(elements.begin(), elements.end(), i), elements.end());
-        for (auto ch : elements) {
-          Node* temp = new Node;
-          temp->c = ch;
-          root->tree_childs.push_back(temp);
-        }
-      }
-    }
-    for (auto i : root->tree_childs) {
-      create(elements, i);
-    }
+ public:
+  explicit Tree(std::vector<char> init) :root(nullptr) {
+    createPermutations(init);
   }
-  void Perm(Node* root) {
-    if (root->tree_childs.empty()) {
-      perm.push_back(root->c);
-      permutations.push_back(perm);
-      perm.clear();
+  std::vector<std::vector<char>> getPerm() const {
+    return permutations;
+  }
+
+ private:
+  struct Node {
+    char symbol;
+    std::vector<Node*> descen_p;
+    explicit Node(char symbol_one = '\0') :symbol(symbol_one) {}
+  };
+  Node* root;
+  std::vector<std::vector<char>> permutations;
+
+  void addNode(Node* new_root, std::vector<char> row) {
+    if (!new_root) {
+      root = new_root = new Node;
     }
-    for (auto p : root->tree_childs) {
-      perm.push_back(root->c);
-      Perm(p);
+    for (char symbol : row) {
+      Node* temp = new Node(symbol);
+      new_root->descen_p.push_back(temp);
+      std::vector<char> newRow(row);
+       newRow.erase(std::find(newRow.begin(), \
+                              newRow.end(), symbol));
+      addNode(temp, newRow);
     }
   }
 
- public:
-  std::vector<std::vector<char>> permutations;
-  Tree(std::vector<char> elements) {
-    root = new Node;
-    root->c = ' ';
-    for (auto q : elements) {
-      Node* temp = new Node;
-      temp->c = q;
-      root->tree_childs.push_back(temp);
+  void evadeTree(Node* new_root, std::vector<char> row_first) {
+    if (new_root != nullptr && new_root->symbol != '\0')
+      row.push_back(new_root->symbol);
+    if (new_root->descen_p.empty())
+      permutations.push_back(row_first);
+    for (Node* descen_p : new_root->descen_p) {
+      evadeTree(descen_p, row_first);
     }
-    for (auto q : root->tree_childs) {
-      create(elements, q);
-      Perm(q);
-      perm.clear();
-    }
+  }
+
+  void createPermutations(std::vector<char> row_first) {
+    addNode(root, row_first);
+    evadeTree(root, {});
   }
 };
 #endif  // INCLUDE_TREE_H_
